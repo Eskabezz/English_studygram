@@ -626,6 +626,57 @@ const DATA = {"parts":[{"id":"basics","roman":"I","title":"Основы","chapte
 
 
 /* ---------- data ---------- */
+/* ---------- editorial polish ---------- */
+const EDITORIAL_REPLACEMENTS = [
+  ["Глагол и дополнение не разлучаем: very much — в конец.", "Обычный порядок — глагол + дополнение + very much: I like this city very much. В утверждении возможен и вариант I very much like this city."],
+  ["[[The]] sun rises in the east.", "[[The]] sun rises in the east and sets in the west."],
+  ["Солнце встаёт на востоке.", "Солнце встаёт на востоке и садится на западе."],
+  ["ступня, фут — ступни, футы", "ступня — ступни; foot / feet = фут / футы (мера длины)"],
+  ["рыба — рыбы (не меняется)", "рыба — рыбы (обычно без изменения: three fish); fishes — разные виды рыб"],
+  ["hour [aʊ]", "hour [ˈaʊə]"],
+  ["С to be do не нужен: am / is / are сами встают перед подлежащим.", "В обычном вопросе и отрицании с to be do не нужен: am / is / are сами встают перед подлежащим."],
+  ["always / constantly + Continuous: действие повторяется слишком часто и раздражает.", "always / constantly + Continuous часто передаёт раздражение или сильную эмоцию. Иногда это просто усиление без неодобрения: She's always helping people."],
+  ["Глаголы состояния — know, want, need, like, understand, believe и др. — обычно не ставим в Continuous, даже если речь о «прямо сейчас»: не ~~I'm needing~~, а I need. Список и исключения — в следующей главе.", "Глаголы состояния — know, want, need, like, understand, believe и др. — обычно не ставим в Continuous, даже если речь о «прямо сейчас»: не ~~I'm needing~~, а I need. В разговорной речи некоторые из них иногда встречаются в Continuous: I'm loving this book. Список и исключения — в следующей главе."],
+  ["Глаголы состояния (know, want, need, like, belong…) — Simple даже «прямо сейчас».", "Глаголы состояния (know, want, need, like, belong…) — обычно Simple даже «прямо сейчас»; feel бывает в обеих формах."],
+  ["«Учу уже три года» — процесс тянется до сих пор: Present Perfect Continuous.", "«Учу уже три года» — процесс тянется до сих пор: Present Perfect Continuous. С глаголами состояния нужен Present Perfect: I've known him for ten years."],
+  ["С точным временем в прошлом (last week, yesterday, ago) — только Past Simple.", "С законченным временем в прошлом (last week, yesterday, ago) в обычном предложении ставим Past Simple, не Present Perfect."],
+  ["yet|уже / ещё (в ? и −)", "yet|ещё не (−); уже? (?)"],
+  ["{{How long}} [[had]] you [[been living]] in Omsk before you moved?", "{{How long}} [[had]] you [[been waiting]] before the bus finally came?"],
+  ["Сколько ты прожил в Омске до переезда?", "Как долго ты ждал, прежде чем наконец пришёл автобус?"],
+  ["Обычно когда время уже задано: When I was a child…", "Период обычно понятен из контекста: When I was a child…; Every summer…"],
+  ["I'll [[get used to]] working nights.", "It took me a month to [[get used to]] working nights."],
+  ["Я привыкну работать по ночам.", "Мне понадобился месяц, чтобы привыкнуть работать по ночам."],
+  ["Главная ловушка: used to work (раньше работал) и am used to working (привык работать) отличаются только am и -ing.", "Главная ловушка: used to + V = «раньше делал»; be used to + V-ing / существительное = «привык». Во второй конструкции to — предлог, поэтому после него нужен -ing."],
+  ["GPS [[is used to determine]] the position of points.", "GPS [[is used to determine]] / [[is used for determining]] the position of points."],
+  ["Экзамен закончится в 12:00, к 12:30 уже будет завершён → Future Perfect.", "Экзамен заканчивается в 12:00, поэтому к 12:30 (через полчаса) он уже будет завершён → Future Perfect."],
+  ["Если придаточное стоит первым, после него ставим запятую: When it [[is]] ready, I'll send it. Если вторым — запятая не нужна.", "Если придаточное стоит первым, после него ставим запятую: When it [[is]] ready, I'll send it. Если вторым — запятая не нужна. В русском переводе пунктуация может отличаться — ориентируйся на английское предложение."],
+  ["I'd rather not|я бы не стал", "I'd rather not|я, пожалуй, не буду"],
+  ["as long as / provided (that)|при условии, что; только если", "as long as / provided (that)|при условии, что"],
+  ["Если исполнитель — «кто-то», «люди», «они», by не пишем: ~~by somebody~~, ~~by people~~.", "Если исполнитель — неопределённые «кто-то», «люди», «они», by обычно не нужен. Но by somebody / by people возможны, если исполнителя нужно подчеркнуть или противопоставить."],
+  ["He ~~said, that~~ he would come.", "He said~~,~~ that he would come."],
+  ["Общий вопрос → if / whether.", "Общий вопрос → if или whether; оба варианта верны, whether чуть формальнее."],
+  ["~~About what~~ are you talking?", "~~What are you talking?~~"],
+  ["Предлог уходит в конец вопроса.", "В обычной речи предлог ставят в конец вопроса. About what are you talking? грамматично, но звучит формально."],
+  ["Я не ходил на лекцию. — Я тоже.", "Я не ходил на лекцию. — Я тоже не ходил."],
+  ["Предмет для этого действия — герундий; предмет сам это делает — причастие.", "Если -ing-слово называет назначение предмета (a measuring tape = a tape for measuring), это герундий / отглагольное существительное. Если предмет сам выполняет действие (a developing country), это причастие."],
+  ["The house ___ (build) in our street now will have ten floors.", "The house ___ (build) in our street will have ten floors."],
+  ["I can ___ (почти не) understand this text without a dictionary.", "I can ___ (едва, почти не) understand this text without a dictionary."],
+  ["В официальном стиле встречается whom — это who в роли дополнения: the person [[whom]] we interviewed. В речи вместо него — who, that или ничего.", "В официальном стиле встречается whom — это who в роли дополнения: the person [[whom]] we interviewed. В речи вместо него — who, that или ничего: the person (who / that) we interviewed."],
+  ["В текстах вместо because часто стоят as и since = «так как»: [[Since]] the soil is wet, work has been stopped. Не путай с since = «с тех пор как».", "В официальных и научных текстах вместо because часто стоят книжные as и since = «так как»: [[Since]] the soil is wet, work has been stopped. Не путай с since = «с тех пор как»."],
+  ["One of the ~~student~~ ~~are~~ late.", "One of the ~~students are~~ late."],
+  ["А -er — ещё и сравнительная степень: stronger — прочнее, higher — выше.", "А -er — ещё и сравнительная степень: stronger — прочнее, higher — выше. Суффиксы -er / -or часто называют не человека, а предмет: boiler — котёл, resistor — резистор, container — контейнер; переводи по контексту."],
+  ["pre- + -ed, стоит перед существительным → определение: сборный, заводского изготовления.", "pre- (заранее) + fabricate + -ed → причастие / прилагательное перед существительным: сборный, заводского изготовления."]
+];
+function applyEditorialPolish(value) {
+  if (Array.isArray(value)) return value.map(applyEditorialPolish);
+  if (value && typeof value === "object") {
+    Object.keys(value).forEach(key => { value[key] = applyEditorialPolish(value[key]); });
+    return value;
+  }
+  if (typeof value !== "string") return value;
+  return EDITORIAL_REPLACEMENTS.reduce((text, pair) => text.split(pair[0]).join(pair[1]), value);
+}
+applyEditorialPolish(DATA);
 const CH = [], BY = {};
 DATA.parts.forEach(p => p.chapters.forEach(c => { c.part = p; c.no = CH.length + 1; CH.push(c); BY[c.id] = c; }));
 
