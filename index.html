@@ -6,10 +6,10 @@
 <meta name="color-scheme" content="light dark">
 <meta name="theme-color" content="#F3F5F9" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#10131A" media="(prefers-color-scheme: dark)">
-<title>Грамматика в клетку</title>
+<title>Грамматика английского · Studygram</title>
 <meta name="description" content="Английская грамматика по-русски: 56 тем, примеры с переводом, частые ошибки и тесты.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Грамматика в клетку">
+<meta property="og:title" content="Грамматика английского · Studygram">
 <meta property="og:description" content="Английская грамматика по-русски: 56 тем, примеры с переводом, частые ошибки и тесты.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -112,6 +112,11 @@ strong { font-weight: 650; }
 .toc a.cur { background: var(--pen-soft); color: var(--ink); font-weight: 600; }
 .toc a .n { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 12.5px; }
 .toc a .ok { color: var(--green); font-size: 13px; font-weight: 700; }
+/* who made it: one quiet line, bot login is spelled with «i» — studigram */
+.credit { margin: 28px 0 8px; color: var(--muted); font-size: 14px; line-height: 1.45; }
+.credit a { color: var(--pen); text-decoration: none; font-weight: 600; }
+.credit a:hover { text-decoration: underline; }
+.side-credit { margin: 22px 8px 4px; font-size: 13px; }
 .toc-empty { color: var(--muted); font-size: 14px; padding: 4px 8px; }
 
 .main { min-width: 0; }
@@ -474,10 +479,11 @@ img, table { max-width: 100%; }
 
 <div class="app">
   <aside class="side" id="side" aria-label="Оглавление">
-    <a class="brand" href="#">Грамматика<br><span>в клетку · A1–B2</span></a>
+    <a class="brand" href="#">Studygram<br><span>грамматика английского</span></a>
     <div class="meter" id="meter"></div>
     <label class="search"><input id="search" type="search" placeholder="Найти тему: if, артикли, used to…" autocomplete="off" aria-label="Поиск по темам"></label>
     <nav class="toc" id="toc"></nav>
+    <p class="credit side-credit">Сделали в Studygram. Расписание твоей группы — <a href="https://t.me/studigram_bot" target="_blank" rel="noopener">@studigram_bot</a></p>
   </aside>
   <div class="main">
     <header class="topbar">
@@ -543,12 +549,19 @@ function exList(item) {
 }
 function formulaHTML(f) {
   const toks = String(f).split(/\s\+\s/);
+  // [[be + V-ing]] spans a «+»: the split cuts it in two, so the colour is carried
+  // across the tokens instead of printing the brackets
+  let open = "";
   return '<span class="fx">' + toks.map((t, i) => {
     t = t.trim();
     if (t === "?" || t === "!") return `<span class="op q">${t}</span>`;
-    let cls = "tok", m;
-    if ((m = t.match(/^\[\[(.+)\]\]$/)) && !/\]\]|\[\[/.test(m[1])) { cls += " tok-hl"; t = m[1]; }
-    else if ((m = t.match(/^\{\{(.+)\}\}$/)) && !/\}\}|\{\{/.test(m[1])) { cls += " tok-mk"; t = m[1]; }
+    let cls = "tok", m, kind = open;
+    if (!open && (m = t.match(/^\[\[(.+)\]\]$/)) && !/\]\]|\[\[/.test(m[1])) { kind = "hl"; t = m[1]; }
+    else if (!open && (m = t.match(/^\{\{(.+)\}\}$/)) && !/\}\}|\{\{/.test(m[1])) { kind = "mk"; t = m[1]; }
+    else if (!open && /^\[\[/.test(t) && !/\]\]/.test(t)) { kind = open = "hl"; t = t.slice(2); }
+    else if (!open && /^\{\{/.test(t) && !/\}\}/.test(t)) { kind = open = "mk"; t = t.slice(2); }
+    else if (open && /(\]\]|\}\})$/.test(t) && !/\[\[|\{\{/.test(t)) { t = t.slice(0, -2); open = ""; }
+    if (kind) cls += " tok-" + kind;
     return (i ? '<span class="op">+</span>' : "") + `<span class="${cls}">${md(t)}</span>`;
   }).join("") + "</span>";
 }
@@ -879,9 +892,9 @@ function homeView() {
 
   <h2 class="sec-h">Как читать пометки</h2>
   <div class="card legend">
-    <div><p class="en" lang="en">She [[has left]].</p><span>Маркером выделена <strong>форма</strong>, которую изучаем.</span></div>
-    <div><p class="en" lang="en">{{every day}}, {{already}}</p><span>Синей ручкой — <strong>слова-подсказки</strong>: по ним узнают время или конструкцию.</span></div>
-    <div><p class="en" lang="en">He ~~go~~ home.</p><span>Красным зачёркнута <strong>ошибка</strong>, ниже — как правильно.</span></div>
+    <div><p class="en" lang="en">${md("She [[has left]].")}</p><span>Маркером выделена <strong>форма</strong>, которую изучаем.</span></div>
+    <div><p class="en" lang="en">${md("{{every day}}, {{already}}")}</p><span>Синей ручкой — <strong>слова-подсказки</strong>: по ним узнают время или конструкцию.</span></div>
+    <div><p class="en" lang="en">${md("He ~~go~~ home.")}</p><span>Красным зачёркнута <strong>ошибка</strong>, ниже — как правильно.</span></div>
     <div>${formulaHTML("S + [[have / has]] + [[V3]]")}<span>Формула: <strong>S</strong> — подлежащее, <strong>V</strong> — глагол, <strong>V2</strong>, <strong>V3</strong> — 2-я и 3-я формы.</span></div>
   </div>
 
@@ -899,6 +912,7 @@ function homeView() {
     <li>Квиз решай, пока не будет без ошибок; «Показать ответы» — только в конце.</li>
     <li>Раздел «Типичные ошибки» перечитывай перед контрольной: там ровно то, за что снижают баллы.</li>
   </ul>
+  <p class="credit">Сделали в Studygram. Расписание твоей группы — <a href="https://t.me/studigram_bot" target="_blank" rel="noopener">@studigram_bot</a></p>
 </div>`;
 }
 
@@ -1022,13 +1036,13 @@ function route() {
   if (BY[id]) {
     mode = "chapter"; curId = id; store.set("last", id);
     view.innerHTML = chapterView(BY[id]);
-    document.title = `${BY[id].title} · Грамматика в клетку`;
+    document.title = `${BY[id].title} · Studygram`;
   } else if (id === "trainer") {
-    mode = "trainer"; curId = null; view.innerHTML = trainerView(); document.title = "Тренажёр · Грамматика в клетку";
+    mode = "trainer"; curId = null; view.innerHTML = trainerView(); document.title = "Тренажёр · Studygram";
   } else if (id === "cheatsheet") {
-    mode = "cheatsheet"; curId = null; view.innerHTML = cheatsheetView(); document.title = "Шпаргалка · Грамматика в клетку";
+    mode = "cheatsheet"; curId = null; view.innerHTML = cheatsheetView(); document.title = "Шпаргалка · Studygram";
   } else {
-    curId = null; view.innerHTML = homeView(); document.title = "Грамматика в клетку";
+    curId = null; view.innerHTML = homeView(); document.title = "Грамматика английского · Studygram";
   }
   document.querySelectorAll(".modes a").forEach(a => a.classList.toggle("on", a.dataset.mode === mode));
   renderToc(); renderMeter();
